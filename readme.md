@@ -23,6 +23,7 @@ roslaunch check_obstacle {multi_range/detector}.launch
 # Installation
 ## With prior install of rplidar_ros
 ```
+cd catkin_ws/src
 sudo git clone https://github.com/oliverburrus/obstacle_detector.git
 ```
 ## Without prior install of rplidar_ros
