@@ -32,7 +32,6 @@ source ~/catkin_ws/devel/setup.bash
 source ~/catkin_ws/devel/setup.bash
 cd src
 sudo git clone https://github.com/Slamtec/rplidar_ros.git
-
-# Clone the check_obstacle folder in this repo into your catkin_ws/src folder
+sudo git clone https://github.com/oliverburrus/obstacle_detector.git
 ```
 
