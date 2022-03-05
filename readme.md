@@ -17,7 +17,7 @@ sudo chmod 666 /dev/ttyUSB0
 cd catkin_ws
 catkin_make
 roslaunch rplidar_ros rplidar.launch
-roslaunch check_obstacle detector.launch
+roslaunch check_obstacle {multi_range/detector}.launch
 ```
 
 # Installation
