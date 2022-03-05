@@ -1,3 +1,5 @@
+![multi_range.launch](https://lh3.googleusercontent.com/pw/AM-JKLV3EibqC1AEUmjvsQnpU55opvjySuAICHiBi0ocyqEG0bqpKUwbJl1gLrZtqBjCcOF3KQNt6Cp29-h46xTvx4GhL6pU-_BJ11kZAfAs99wtV4JlbNR_e7UWNVfWX978VoKkM2HXXeWoUVhi9rcN1U8uXQ=w960-h720-no?authuser=0)
+
 SETUP AND LAUNCH:
 ```
 # Make sure the RPLIDAR is connected
