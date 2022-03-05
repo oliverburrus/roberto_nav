@@ -1,6 +1,11 @@
-![multi_range.launch](https://lh3.googleusercontent.com/pw/AM-JKLV3EibqC1AEUmjvsQnpU55opvjySuAICHiBi0ocyqEG0bqpKUwbJl1gLrZtqBjCcOF3KQNt6Cp29-h46xTvx4GhL6pU-_BJ11kZAfAs99wtV4JlbNR_e7UWNVfWX978VoKkM2HXXeWoUVhi9rcN1U8uXQ=w960-h720-no?authuser=0)
+# Launch File Explanations
 
-SETUP AND LAUNCH:
+## multi_range.launch 
+
+This launch file will set up a boolean-value object detection in 4 ranges within a 90 degree cone in front of the RPLIDAR. You can set the r_value (in meters) to determine how far away you want the robot to stay away from an obstacle (default .5 m).
+<img src="https://lh3.googleusercontent.com/pw/AM-JKLV3EibqC1AEUmjvsQnpU55opvjySuAICHiBi0ocyqEG0bqpKUwbJl1gLrZtqBjCcOF3KQNt6Cp29-h46xTvx4GhL6pU-_BJ11kZAfAs99wtV4JlbNR_e7UWNVfWX978VoKkM2HXXeWoUVhi9rcN1U8uXQ=w960-h720-no?authuser=0" width=400, height=300/>
+
+# Setup and Launch
 ```
 # Make sure the RPLIDAR is connected
 ls -l /dev | grep ttyUSB0
@@ -15,7 +20,7 @@ roslaunch rplidar_ros rplidar.launch
 roslaunch check_obstacle detector.launch
 ```
 
-INSTALLATION (only needed once):
+# Installation
 ```
 # Install dependencies.
 sudo apt-get update
