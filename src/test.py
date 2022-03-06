@@ -8,6 +8,11 @@ import time
 
 R_value = .5
 
+msg = Twist()
+linear_x = 0
+angular_z = 0
+state_description = ''
+
 def move_right():
 	start_time = time.time()
 	t1 = 3
@@ -79,10 +84,6 @@ def callback(msg):
         	Right = 0
 
 #-------
-    	msg = Twist()
-    #linear_x = 0
-    #angular_z = 0
-    #state_description = ''
 	if Left == 0 and Front_left == 0 and Front_right == 0 and Right == 0:
         	state_description = 'case 1 - clear'
        		linear_x = 0.6
