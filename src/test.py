@@ -1,37 +1,36 @@
 #!/usr/bin/env python
 
 import rospy
-
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
 import time
+import math
 
-
-R_value = .77 
+robot_width = .5
+lidar_y_position = .1
+clearence = .2
+R_value = (robot_width/2)/math.sin(radians(22.5))+lidar_y_position+clearence
 
 def move_right():
-	start_time = time.time()
-	t1 = 3
-	t2 = 6
-	t3 = 9
-
-	while True:
-		current_time = time.time()
-		elapsed_time = current_time - start_time
+	# angular_z = 0.3 until fully turned
+	a = msg.ranges[522.5:617.5]
+    	if min(a) <= R_value+clearence:
+        	Left = 2
+	elif # lighthouse detects robot is too close to wall:
+		Left = 1
+    	else:
+        	Left = 0
 		
-		if elapsed_time > t1:
-			linear_x = 0
-        		angular_z = 0.3
-		elif elapsed_time > t2:
-			linear_x = 0.2
-			angular_z = 0
-		elif elapsed_time > t3:
-			linear_x = 0
-			angular_z = -0.3
-
-		#msg.linear.x = linear_x
-		#msg.angular.z = angular_z
-		#pub.publish(msg)
+	if Left == 2:
+        	state_description = 'Obstacle Detected'
+       		linear_x = 0.6
+        	angular_z = 0
+	elif Left == 1:
+		state_description = 'Too Close to Wall'
+		#Turn straight, then run "move_left"
+        elif Left == 0:
+        	state_description = 'Clear'
+		#Turn back straight
 
 def move_left():
 	start_time = time.time()
