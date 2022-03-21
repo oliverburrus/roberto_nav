@@ -6,12 +6,8 @@ from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
 import time
 
-R_value = .5
 
-msg = Twist()
-linear_x = 0
-angular_z = 0
-state_description = ''
+R_value = .77 
 
 def move_right():
 	start_time = time.time()
@@ -33,9 +29,9 @@ def move_right():
 			linear_x = 0
 			angular_z = -0.3
 
-		msg.linear.x = linear_x
-		msg.angular.z = angular_z
-		pub.publish(msg)
+		#msg.linear.x = linear_x
+		#msg.angular.z = angular_z
+		#pub.publish(msg)
 
 def move_left():
 	start_time = time.time()
@@ -50,16 +46,16 @@ def move_left():
 			linear_x = 0.2
         		angular_z = -0.3
 
-    			msg.linear.x = linear_x
-    			msg.angular.z = angular_z
-    			pub.publish(msg)
+    			#msg.linear.x = linear_x
+    			#msg.angular.z = angular_z
+    			#pub.publish(msg)
 		elif elapsed_time > t2:
 			linear_x = 0.2
 			angular_z = 0.3
 
-    			msg.linear.x = linear_x
-    			msg.angular.z = angular_z
-    			pub.publish(msg)
+    			#msg.linear.x = linear_x
+    			#msg.angular.z = angular_z
+    			#pub.publish(msg)
 
 def callback(msg):
    	a = msg.ranges[48:95]
@@ -84,6 +80,11 @@ def callback(msg):
         	Right = 0
 
 #-------
+    	pub = rospy.Publisher('twist_msg', Twist)
+	msg = Twist()
+    	linear_x = 0
+    	angular_z = 0
+    	state_description = ''
 	if Left == 0 and Front_left == 0 and Front_right == 0 and Right == 0:
         	state_description = 'case 1 - clear'
        		linear_x = 0.6
@@ -145,14 +146,14 @@ def callback(msg):
         	linear_x = 0
         	angular_z = -0.3
         elif Left == 1 and Front_left == 1 and Front_right == 1 and Right == 1:
-        	state_description = 'case 16 - ERROR:ALL_DIR'
+        	state_description = 'case 16 - all_directions'
         	linear_x = 0
         	angular_z = -0.3
         else:
         	state_description = 'unknown case'
     	print(state_description)
 
-    #rospy.loginfo(state_description)
+    	rospy.loginfo(state_description)
     	msg.linear.x = linear_x
     	msg.angular.z = angular_z
     	pub.publish(msg)
@@ -163,4 +164,3 @@ rospy.init_node('check_obstacle')
 sub = rospy.Subscriber('/scan', LaserScan, callback)
 
 rospy.spin()
-
