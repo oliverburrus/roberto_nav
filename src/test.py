@@ -23,33 +23,31 @@ def move_right():
     	angular_z = 0
     	state_description = ''
 	# angular_z = 0.3 until fully turned
-	if #Angle > -90:
+	while #Angle > -90:
 		angular_z = 0.3
+	a = msg.ranges[522.5:617.5]
+	if min(a) <= R_value+clearence:
+		Left = 2
+	elif #x >= wall_width/2-clearence: 
+		# lighthouse detects robot is too close to wall
+		Left = 1
 	else:
-		a = msg.ranges[522.5:617.5]
-		if min(a) <= R_value+clearence:
-			Left = 2
-		elif #x >= wall_width/2-clearence: 
-			# lighthouse detects robot is too close to wall
-			Left = 1
-		else:
-			Left = 0
+		Left = 0
 
-		if Left == 2:
-			state_description = 'Obstacle Detected'
-			linear_x = 0.6
-			angular_z = 0
-		elif Left == 1:
-			state_description = 'Too Close to Wall'
-			#Turn straight, then run "move_left"
-			if #Angle > 0:
-				angular_z = -0.3
-			else:
-				move_left()
-		elif Left == 0:
-			state_description = 'Clear'
-			if #Angle > 0:
-				angular_z = -0.3
+	if Left == 2:
+		state_description = 'Obstacle Detected'
+		linear_x = 0.6
+		angular_z = 0
+	elif Left == 1:
+		state_description = 'Too Close to Wall'
+		#Turn straight, then run "move_left"
+		while #Angle > 0:
+			angular_z = -0.3
+		move_left()
+	elif Left == 0:
+		state_description = 'Clear'
+		while #Angle > 0:
+			angular_z = -0.3
 	rospy.loginfo(state_description)
     	msg.linear.x = linear_x
     	msg.angular.z = angular_z
@@ -61,34 +59,32 @@ def move_left():
     	linear_x = 0
     	angular_z = 0
     	state_description = ''
-	# angular_z = 0.3 until fully turned
-	if #Angle < 90:
+	# angular_z = -0.3 until fully turned
+	while #Angle < 90:
 		angular_z = -0.3
+	a = msg.ranges[522.5:617.5]
+	if min(a) <= R_value+clearence:
+		Right = 2
+	elif #x >= wall_width/2-clearence: 
+		# lighthouse detects robot is too close to wall
+		Right = 1
 	else:
-		a = msg.ranges[522.5:617.5]
-		if min(a) <= R_value+clearence:
-			Right = 2
-		elif #x >= wall_width/2-clearence: 
-			# lighthouse detects robot is too close to wall
-			Right = 1
-		else:
-			Right = 0
+		Right = 0
 
-		if Right == 2:
-			state_description = 'Obstacle Detected'
-			linear_x = 0.6
-			angular_z = 0
-		elif Right == 1:
-			state_description = 'Too Close to Wall'
-			#Turn straight, then run "move_right"
-			if #Angle > 0:
-				angular_z = 0.3
-			else:
-				move_right()
-		elif Right == 0:
-			state_description = 'Clear'
-			if #Angle > 0:
-				angular_z = 0.3
+	if Right == 2:
+		state_description = 'Obstacle Detected'
+		linear_x = 0.6
+		angular_z = 0
+	elif Right == 1:
+		state_description = 'Too Close to Wall'
+		#Turn straight, then run "move_right"
+		while #Angle > 0:
+			angular_z = 0.3
+		move_right()
+	elif Right == 0:
+		state_description = 'Clear'
+		while #Angle > 0:
+			angular_z = 0.3
 	rospy.loginfo(state_description)
     	msg.linear.x = linear_x
     	msg.angular.z = angular_z
