@@ -31,6 +31,9 @@ def move_right():
 		elif #y >= wall_width/2-clearence: 
 			# lighthouse detects robot is too close to wall
 			Left = 1
+		elif #y <= -wall_width/2-clearence: 
+			# lighthouse detects robot is too close to wall
+			Left = 1
 		else:
 			Left = 0
 
