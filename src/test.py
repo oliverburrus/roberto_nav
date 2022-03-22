@@ -3,34 +3,56 @@
 import rospy
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
+from nav_msgs.msg import Odometry
 import time
 import math
+
 
 robot_width = .5
 lidar_y_position = .1
 clearence = .2
 R_value = (robot_width/2)/math.sin(radians(22.5))+lidar_y_position+clearence
 
+Wall_width = 3
+
 def move_right():
+	pub = rospy.Publisher('twist_msg', Twist)
+	msg = Twist()
+    	linear_x = 0
+    	angular_z = 0
+    	state_description = ''
 	# angular_z = 0.3 until fully turned
-	a = msg.ranges[522.5:617.5]
-    	if min(a) <= R_value+clearence:
-        	Left = 2
-	elif # lighthouse detects robot is too close to wall:
-		Left = 1
-    	else:
-        	Left = 0
-		
-	if Left == 2:
-        	state_description = 'Obstacle Detected'
-       		linear_x = 0.6
-        	angular_z = 0
-	elif Left == 1:
-		state_description = 'Too Close to Wall'
-		#Turn straight, then run "move_left"
-        elif Left == 0:
-        	state_description = 'Clear'
-		#Turn back straight
+	if #Angle < 90:
+		angular_z = 0.3
+	else:
+		a = msg.ranges[522.5:617.5]
+		if min(a) <= R_value+clearence:
+			Left = 2
+		elif #y >= wall_width/2-clearence: 
+			# lighthouse detects robot is too close to wall
+			Left = 1
+		else:
+			Left = 0
+
+		if Left == 2:
+			state_description = 'Obstacle Detected'
+			linear_x = 0.6
+			angular_z = 0
+		elif Left == 1:
+			state_description = 'Too Close to Wall'
+			#Turn straight, then run "move_left"
+			if #Angle > 0:
+				angular_z = 0.3
+			else:
+				move_left()
+		elif Left == 0:
+			state_description = 'Clear'
+			if #Angle > 0:
+				angular_z = 0.3
+	rospy.loginfo(state_description)
+    	msg.linear.x = linear_x
+    	msg.angular.z = angular_z
+    	pub.publish(msg)
 
 def move_left():
 	start_time = time.time()
