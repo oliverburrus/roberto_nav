@@ -28,10 +28,7 @@ def move_right():
 		a = msg.ranges[522.5:617.5]
 		if min(a) <= R_value+clearence:
 			Left = 2
-		elif #y >= wall_width/2-clearence: 
-			# lighthouse detects robot is too close to wall
-			Left = 1
-		elif #y <= -wall_width/2-clearence: 
+		elif #x >= wall_width/2-clearence: 
 			# lighthouse detects robot is too close to wall
 			Left = 1
 		else:
