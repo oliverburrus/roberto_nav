@@ -3,7 +3,7 @@
 import rospy
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
-from nav_msgs.msg import Odometry
+from geometry_msgs.msg import Pose
 import time
 import math
 
@@ -16,13 +16,14 @@ R_value = (robot_width/2)/math.sin(radians(22.5))+lidar_y_position+clearence
 Wall_width = 3
 
 def move_right():
+	#may need to transform pose angle data
 	pub = rospy.Publisher('twist_msg', Twist)
 	msg = Twist()
     	linear_x = 0
     	angular_z = 0
     	state_description = ''
 	# angular_z = 0.3 until fully turned
-	if #Angle < 90:
+	if #Angle > -90:
 		angular_z = 0.3
 	else:
 		a = msg.ranges[522.5:617.5]
@@ -42,10 +43,49 @@ def move_right():
 			state_description = 'Too Close to Wall'
 			#Turn straight, then run "move_left"
 			if #Angle > 0:
-				angular_z = 0.3
+				angular_z = -0.3
 			else:
 				move_left()
 		elif Left == 0:
+			state_description = 'Clear'
+			if #Angle > 0:
+				angular_z = -0.3
+	rospy.loginfo(state_description)
+    	msg.linear.x = linear_x
+    	msg.angular.z = angular_z
+    	pub.publish(msg)
+
+def move_left():
+	pub = rospy.Publisher('twist_msg', Twist)
+	msg = Twist()
+    	linear_x = 0
+    	angular_z = 0
+    	state_description = ''
+	# angular_z = 0.3 until fully turned
+	if #Angle < 90:
+		angular_z = -0.3
+	else:
+		a = msg.ranges[522.5:617.5]
+		if min(a) <= R_value+clearence:
+			Right = 2
+		elif #x >= wall_width/2-clearence: 
+			# lighthouse detects robot is too close to wall
+			Right = 1
+		else:
+			Right = 0
+
+		if Right == 2:
+			state_description = 'Obstacle Detected'
+			linear_x = 0.6
+			angular_z = 0
+		elif Right == 1:
+			state_description = 'Too Close to Wall'
+			#Turn straight, then run "move_right"
+			if #Angle > 0:
+				angular_z = 0.3
+			else:
+				move_right()
+		elif Right == 0:
 			state_description = 'Clear'
 			if #Angle > 0:
 				angular_z = 0.3
@@ -53,30 +93,6 @@ def move_right():
     	msg.linear.x = linear_x
     	msg.angular.z = angular_z
     	pub.publish(msg)
-
-def move_left():
-	start_time = time.time()
-	t1 = 3
-	t2 = 6
-
-	while True:
-		current_time = time.time()
-		elapsed_time = current_time - start_time
-		
-		if elapsed_time > t1:
-			linear_x = 0.2
-        		angular_z = -0.3
-
-    			#msg.linear.x = linear_x
-    			#msg.angular.z = angular_z
-    			#pub.publish(msg)
-		elif elapsed_time > t2:
-			linear_x = 0.2
-			angular_z = 0.3
-
-    			#msg.linear.x = linear_x
-    			#msg.angular.z = angular_z
-    			#pub.publish(msg)
 
 def callback(msg):
    	a = msg.ranges[48:95]
