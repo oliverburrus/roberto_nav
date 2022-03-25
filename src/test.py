@@ -14,28 +14,43 @@ lidar_y_position = .1
 #How far you want your robot to stay away from obstacles in meters
 clearence = .2
 
-R_value = (robot_width/2)/math.sin(math.radians(22.5))+lidar_y_position+clearence
 Wall_width = 3
 
+#Max radius of LIDAR scan
+R_value = (robot_width/2)/math.sin(math.radians(22.5))+lidar_y_position+clearence
+
+#Now, we define the movement functions (eg. move_right, move_left, move_straight)
 def move_right(data, pose_data):
+	#Set the publisher and the initial state
 	pub = rospy.Publisher('twist_msg', Twist, queue_size = 10)
 	msg = Twist()
     	linear_x = 0
     	angular_z = 0
     	state_description = ''
+	
+	#Get Pose data
 	position_x = pose_data.position.x
 	orientation_x = pose_data.orientation.x
+	
+	#Orient robot 90deg
 	while orientation_x < -math.pi/2:
 		angular_z = 0.3
+		
+	#Get LIDAR data for the left quadrant
 	a = data.ranges[147:233]
+	
+	#Set Left values
 	if min(a) <= R_value+clearence:
+		#If obstacle is still in robots' path
 		Left = 2
 	elif position_x <= -(wall_width/2)-clearence: 
 		# lighthouse detects robot is too close to wall
 		Left = 1
 	else:
+		#Path clear
 		Left = 0
 
+	#Set twist messages according to Left values
 	if Left == 2:
 		state_description = 'Obstacle Detected_right'
 		linear_x = 0.6
@@ -50,6 +65,8 @@ def move_right(data, pose_data):
 		state_description = 'Clear'
 		angular_z = -0.3
 		linear_x = 0
+	
+	#Publish Twist_msg
 	rospy.loginfo(state_description)
     	msg.linear.x = linear_x
     	msg.angular.z = angular_z
