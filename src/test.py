@@ -126,9 +126,6 @@ def callback(scan, pose_data):
         	Right = 0
 
 
-
-#-------
-
 	if Left == 0 and Front_left == 0 and Front_right == 0 and Right == 0:
         	state_description = 'case 1 - clear'
        		move_straight()
