@@ -23,16 +23,29 @@ def move_right(data, pose_data):
     	linear_x = 0
     	angular_z = 0
     	state_description = ''
+	position_x = pose_data.position.x
+	orientation_x = pose_data.orientation.x
+	while orientation_x < -math.pi/2:
+		angular_z = 0.3
 	a = data.ranges[147:233]
 	if min(a) <= R_value+clearence:
+		Left = 2
+	elif position_x <= -(wall_width/2)-clearence: 
+		# lighthouse detects robot is too close to wall
 		Left = 1
 	else:
 		Left = 0
 
-	if Left == 1:
+	if Left == 2:
 		state_description = 'Obstacle Detected_right'
 		linear_x = 0.6
 		angular_z = 0
+	elif Left == 1:
+		state_description = 'Too Close to Wall'
+		#Turn straight, then run "move_right"
+		while orientation_x < 0:
+			angular_z = -0.3
+		move_left(data, pose_data)
 	elif Left == 0:
 		state_description = 'Clear'
 		angular_z = -0.3
@@ -43,22 +56,34 @@ def move_right(data, pose_data):
     	pub.publish(msg)
 
 def move_left(data, pose_data):
-	b = pose_data.position.x
 	pub = rospy.Publisher('twist_msg', Twist, queue_size = 10)
 	msg = Twist()
     	linear_x = 0
     	angular_z = 0
     	state_description = ''
+	position_x = pose_data.position.x
+	orientation_x = pose_data.orientation.x
+	while orientation_x < math.pi/2:
+		angular_z = 0.3
 	a = data.ranges[522:617]
 	if min(a) <= R_value+clearence:
+		Right = 2
+	elif position_x >= (wall_width/2)-clearence: 
+		# lighthouse detects robot is too close to wall
 		Right = 1
 	else:
 		Right = 0
 
-	if Right == 1:
+	if Right == 2:
 		state_description = 'Obstacle Detected_left'
 		linear_x = 0.6
 		angular_z = 0
+	elif Right == 1:
+		state_description = 'Too Close to Wall'
+		#Turn straight, then run "move_right"
+		while orientation_x > 0:
+			angular_z = 0.3
+		move_right(data, pose_data)
 	elif Right == 0:
 		state_description = 'Clear'
 		angular_z = 0.3
