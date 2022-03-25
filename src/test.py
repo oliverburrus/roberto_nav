@@ -103,23 +103,23 @@ def move_straight():
     	msg.angular.z = angular_z
     	pub.publish(msg)
 
-def callback(data, pose_data):
-   	a = data.ranges[48:95]
+def callback(scan, pose_data):
+   	a = scan.ranges[48:95]
     	if min(a) <= R_value:
         	Left = 1
     	else:
         	Left = 0
-    	b = data.ranges[0:47]
+    	b = scan.ranges[0:47]
     	if min(b) <= R_value:
         	Front_left = 1
     	else:
         	Front_left = 0
-    	c = data.ranges[713:760]
+    	c = scan.ranges[713:760]
     	if min(c) <= R_value:
         	Front_right = 1
     	else:
         	Front_right = 0
-    	d = data.ranges[665:713]
+    	d = scan.ranges[665:713]
     	if min(d) <= R_value:
         	Right = 1
     	else:
@@ -134,49 +134,49 @@ def callback(data, pose_data):
        		move_straight()
         elif Left == 1 and Front_left == 0 and Front_right == 0 and Right == 0:
         	state_description = 'case 2 - far_left'
-		move_right(data, pose_data)
+		move_right(scan, pose_msg)
     	elif Left == 0 and Front_left == 1 and Front_right == 0 and Right == 0:
         	state_description = 'case 3 - front_left'
-        	move_right(data, pose_data)
+        	move_right(scan, pose_msg)
         elif Left == 1 and Front_left == 1 and Front_right == 0 and Right == 0:
         	state_description = 'case 4 - left'
-        	move_right(data, pose_data)
+        	move_right(scan, pose_msg)
         elif Left == 0 and Front_left == 0 and Front_right == 0 and Right == 1:
         	state_description = 'case 5 - far_right'
-        	move_left(data, pose_data)
+        	move_left(scan, pose_msg)
     	elif Left == 0 and Front_left == 0 and Front_right == 1 and Right == 0:
         	state_description = 'case 6 - front_right'
-        	move_left(data, pose_data)
+        	move_left(scan, pose_msg)
         elif Left == 0 and Front_left == 0 and Front_right == 1 and Right == 1:
         	state_description = 'case 7 - right'
-        	move_left(data, pose_data)
+        	move_left(scan, pose_msg)
         elif Left == 0 and Front_left == 1 and Front_right == 1 and Right == 0:
         	state_description = 'case 8 - front'
-        	move_right(data, pose_data)
+        	move_right(scan, pose_msg)
         elif Left == 1 and Front_left == 0 and Front_right == 0 and Right == 1:
         	state_description = 'case 9 - far_left/far_right'
-        	move_left(data, pose_data)
+        	move_left(scan, pose_msg)
     	elif Left == 1 and Front_left == 0 and Front_right == 1 and Right == 0:
         	state_description = 'case 10 - far_left/front_right'
-        	move_left(data, pose_data)
+        	move_left(scan, pose_msg)
         elif Left == 0 and Front_left == 1 and Front_right == 0 and Right == 1:
         	state_description = 'case 11 - front_left/far_right'
-        	move_left(data, pose_data)
+        	move_left(scan, pose_msg)
         elif Left == 0 and Front_left == 1 and Front_right == 1 and Right == 1:
         	state_description = 'case 12 - front_left/right'
-        	move_left(data, pose_data)
+        	move_left(scan, pose_msg)
         elif Left == 1 and Front_left == 1 and Front_right == 1 and Right == 0:
         	state_description = 'case 13 - left/front_right'
-        	move_right(data, pose_data)
+        	move_right(scan, pose_msg)
         elif Left == 1 and Front_left == 0 and Front_right == 1 and Right == 1:
         	state_description = 'case 14 - far_left/right'
-        	move_left(data, pose_data)
+        	move_left(scan, pose_msg)
     	elif Left == 1 and Front_left == 1 and Front_right == 0 and Right == 1:
         	state_description = 'case 15 - left/far_right'
-        	move_left(data, pose_data)
+        	move_left(scan, pose_msg)
         elif Left == 1 and Front_left == 1 and Front_right == 1 and Right == 1:
         	state_description = 'case 16 - all_directions'
-        	move_left(data, pose_data)
+        	move_left(scan, pose_msg)
         else:
         	state_description = 'unknown case'
 
@@ -185,10 +185,10 @@ def callback(data, pose_data):
 rospy.init_node('check_obstacle')
 
 rospy.Subscriber('/scan', LaserScan, callback)
-laser_sub = message_filters.Subscriber('data', LaserScan)
-pose_sub = message_filters.Subscriber('pose_data', Pose)
+laser_sub = message_filters.Subscriber('/scan', LaserScan)
+pose_sub = message_filters.Subscriber('/pose_msg', Pose)
 
-ts = message_filters.TimeSynchronizer([laser_sub, pose_sub], 10)
+ts = message_filters.ApproximateTimeSynchronizer([laser_sub, pose_sub], queue_size=5, slop=0.1, allow_headerless=True)
 ts.registerCallback(callback)
 
 rospy.spin()
