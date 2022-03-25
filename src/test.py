@@ -1,18 +1,23 @@
 #!/usr/bin/env python
 
-import rospy
+#Import required packages
+import rospy 
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
 import math
+import message_filters
 
-
+#The width of your robot in meters
 robot_width = .5
+#How far the lidar is set back on the robot in meters
 lidar_y_position = .1
+#How far you want your robot to stay away from obstacles in meters
 clearence = .2
+
 R_value = (robot_width/2)/math.sin(math.radians(22.5))+lidar_y_position+clearence
 Wall_width = 3
 
-def move_right(data):
+def move_right(data, pose_data):
 	pub = rospy.Publisher('twist_msg', Twist, queue_size = 10)
 	msg = Twist()
     	linear_x = 0
@@ -37,7 +42,8 @@ def move_right(data):
     	msg.angular.z = angular_z
     	pub.publish(msg)
 
-def move_left(data):
+def move_left(data, pose_data):
+	b = pose_data.position.x
 	pub = rospy.Publisher('twist_msg', Twist, queue_size = 10)
 	msg = Twist()
     	linear_x = 0
@@ -72,7 +78,7 @@ def move_straight():
     	msg.angular.z = angular_z
     	pub.publish(msg)
 
-def callback(data):
+def callback(data, pose_data):
    	a = data.ranges[48:95]
     	if min(a) <= R_value:
         	Left = 1
@@ -103,49 +109,49 @@ def callback(data):
        		move_straight()
         elif Left == 1 and Front_left == 0 and Front_right == 0 and Right == 0:
         	state_description = 'case 2 - far_left'
-		move_right(data)
+		move_right(data, pose_data)
     	elif Left == 0 and Front_left == 1 and Front_right == 0 and Right == 0:
         	state_description = 'case 3 - front_left'
-        	move_right(data)
+        	move_right(data, pose_data)
         elif Left == 1 and Front_left == 1 and Front_right == 0 and Right == 0:
         	state_description = 'case 4 - left'
-        	move_right(data)
+        	move_right(data, pose_data)
         elif Left == 0 and Front_left == 0 and Front_right == 0 and Right == 1:
         	state_description = 'case 5 - far_right'
-        	move_left(data)
+        	move_left(data, pose_data)
     	elif Left == 0 and Front_left == 0 and Front_right == 1 and Right == 0:
         	state_description = 'case 6 - front_right'
-        	move_left(data)
+        	move_left(data, pose_data)
         elif Left == 0 and Front_left == 0 and Front_right == 1 and Right == 1:
         	state_description = 'case 7 - right'
-        	move_left(data)
+        	move_left(data, pose_data)
         elif Left == 0 and Front_left == 1 and Front_right == 1 and Right == 0:
         	state_description = 'case 8 - front'
-        	move_right(data)
+        	move_right(data, pose_data)
         elif Left == 1 and Front_left == 0 and Front_right == 0 and Right == 1:
         	state_description = 'case 9 - far_left/far_right'
-        	move_left(data)
+        	move_left(data, pose_data)
     	elif Left == 1 and Front_left == 0 and Front_right == 1 and Right == 0:
         	state_description = 'case 10 - far_left/front_right'
-        	move_left(data)
+        	move_left(data, pose_data)
         elif Left == 0 and Front_left == 1 and Front_right == 0 and Right == 1:
         	state_description = 'case 11 - front_left/far_right'
-        	move_left(data)
+        	move_left(data, pose_data)
         elif Left == 0 and Front_left == 1 and Front_right == 1 and Right == 1:
         	state_description = 'case 12 - front_left/right'
-        	move_left(data)
+        	move_left(data, pose_data)
         elif Left == 1 and Front_left == 1 and Front_right == 1 and Right == 0:
         	state_description = 'case 13 - left/front_right'
-        	move_right(data)
+        	move_right(data, pose_data)
         elif Left == 1 and Front_left == 0 and Front_right == 1 and Right == 1:
         	state_description = 'case 14 - far_left/right'
-        	move_left(data)
+        	move_left(data, pose_data)
     	elif Left == 1 and Front_left == 1 and Front_right == 0 and Right == 1:
         	state_description = 'case 15 - left/far_right'
-        	move_left(data)
+        	move_left(data, pose_data)
         elif Left == 1 and Front_left == 1 and Front_right == 1 and Right == 1:
         	state_description = 'case 16 - all_directions'
-        	move_left(data)
+        	move_left(data, pose_data)
         else:
         	state_description = 'unknown case'
 
@@ -154,5 +160,10 @@ def callback(data):
 rospy.init_node('check_obstacle')
 
 rospy.Subscriber('/scan', LaserScan, callback)
+laser_sub = message_filters.Subscriber('data', LaserScan)
+pose_sub = message_filters.Subscriber('pose_data', Pose)
+
+ts = message_filters.TimeSynchronizer([laser_sub, pose_sub], 10)
+ts.registerCallback(callback)
 
 rospy.spin()
