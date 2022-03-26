@@ -120,7 +120,7 @@ def move_straight():
     	msg.angular.z = angular_z
     	pub.publish(msg)
 
-def callback(scan, pose_data):
+def callback(scan, pose_msg):
    	a = scan.ranges[48:95]
     	if min(a) <= R_value:
         	Left = 1
