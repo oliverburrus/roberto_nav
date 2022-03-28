@@ -34,7 +34,7 @@ def move_right(data, pose_data):
 	position_x = pose_data.pose.position.x
 	orientation_x = pose_data.pose.orientation.x
 	
-	#Orient robot 90deg
+	#Orient robot 90deg (in development)
 	#while orientation_x < -math.pi/2:
 	#	angular_z = 0.3
 		
@@ -46,6 +46,7 @@ def move_right(data, pose_data):
 		#If obstacle is still in robots' path
 		Left = 2
 	elif position_x <= -(wall_width/2)-clearence: 
+		#Needs proof of value
 		# lighthouse detects robot is too close to wall
 		Left = 1
 	else:
@@ -60,9 +61,11 @@ def move_right(data, pose_data):
 	elif Left == 1:
 		state_description = 'Too Close to Wall'
 		#Turn straight, then run "move_right"
+		#Needs proof of value
 		#while orientation_x < 0:
 		angular_z = -0.3
-		move_left(data, pose_data)
+		#Below is causing bug (probably because of orientation)
+		#move_left(data, pose_data)
 	elif Left == 0:
 		state_description = 'Clear'
 		angular_z = -0.3
@@ -82,6 +85,8 @@ def move_left(data, pose_data):
     	state_description = ''
 	position_x = pose_data.pose.position.x
 	orientation_x = pose_data.pose.orientation.x
+	
+	#Orient robot 90deg (in development)
 	#while orientation_x < math.pi/2:
 	#	angular_z = 0.3
 	a = data.ranges[522:617]
@@ -202,7 +207,7 @@ rospy.init_node('check_obstacle')
 laser_sub = message_filters.Subscriber('/scan', LaserScan)
 pose_sub = message_filters.Subscriber('/pose_msg', PoseStamped)
 
-ts = message_filters.ApproximateTimeSynchronizer([laser_sub, pose_sub], queue_size=10, slop = .1)
+ts = message_filters.ApproximateTimeSynchronizer([laser_sub, pose_sub], queue_size=10, slop = 1)
 ts.registerCallback(callback)
 
 rospy.spin()
