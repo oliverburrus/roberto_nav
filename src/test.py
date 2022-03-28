@@ -32,9 +32,9 @@ def move_right(data, pose_data):
 	position_x = pose_data.position.x
 	orientation_x = pose_data.orientation.x
 	
-	#Orient robot 90deg
-	while orientation_x < -math.pi/2:
-		angular_z = 0.3
+	#Orient robot 90deg (in development)
+	#while orientation_x < -math.pi/2:
+	#	angular_z = 0.3
 		
 	#Get LIDAR data for the left quadrant
 	a = data.ranges[147:233]
@@ -43,6 +43,7 @@ def move_right(data, pose_data):
 	if min(a) <= R_value+clearence:
 		#If obstacle is still in robots' path
 		Left = 2
+	#Needs proof of value
 	elif position_x <= -(wall_width/2)-clearence: 
 		# lighthouse detects robot is too close to wall
 		Left = 1
@@ -58,9 +59,11 @@ def move_right(data, pose_data):
 	elif Left == 1:
 		state_description = 'Too Close to Wall'
 		#Turn straight, then run "move_right"
+		#Needs proof of value
 		while orientation_x < 0:
 			angular_z = -0.3
-		move_left(data, pose_data)
+		#Below is causing bug
+		#move_left(data, pose_data) 
 	elif Left == 0:
 		state_description = 'Clear'
 		angular_z = -0.3
@@ -80,11 +83,15 @@ def move_left(data, pose_data):
     	state_description = ''
 	position_x = pose_data.position.x
 	orientation_x = pose_data.orientation.x
-	while orientation_x < math.pi/2:
-		angular_z = 0.3
+	
+	#Orient robot 90deg (in development)
+	#while orientation_x < math.pi/2:
+	#	angular_z = 0.3
+
 	a = data.ranges[522:617]
 	if min(a) <= R_value+clearence:
 		Right = 2
+	#Needs proof of value
 	elif position_x >= (wall_width/2)-clearence: 
 		# lighthouse detects robot is too close to wall
 		Right = 1
@@ -95,19 +102,34 @@ def move_left(data, pose_data):
 		state_description = 'Obstacle Detected_left'
 		linear_x = 0.6
 		angular_z = 0
+		rospy.loginfo(state_description)
+		msg.linear.x = linear_x
+		msg.angular.z = angular_z
+		pub.publish(msg)
 	elif Right == 1:
-		state_description = 'Too Close to Wall'
 		#Turn straight, then run "move_right"
+		#Needs proof of value
 		while orientation_x > 0:
+			state_description = 'Too Close to Wall'
 			angular_z = 0.3
-		move_right(data, pose_data)
+			linear_x = 0
+			rospy.loginfo(state_description)
+			msg.linear.x = linear_x
+			msg.angular.z = angular_z
+			pub.publish(msg)
+		#Below is causing bug
+		#move_right(data, pose_data)
 	elif Right == 0:
-		state_description = 'Clear'
-		angular_z = 0.3
-	rospy.loginfo(state_description)
-    	msg.linear.x = linear_x
-    	msg.angular.z = angular_z
-    	pub.publish(msg)
+		while orientation_x > 0:
+			state_description = 'Clear'
+			angular_z = 0.3
+			linear_x = 0
+			rospy.loginfo(state_description)
+			msg.linear.x = linear_x
+			msg.angular.z = angular_z
+			pub.publish(msg)
+			
+	
 
 def move_straight():
 	pub = rospy.Publisher('twist_msg', Twist)
