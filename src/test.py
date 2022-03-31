@@ -3,7 +3,7 @@
 #Import required packages
 import rospy 
 from sensor_msgs.msg import LaserScan
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Pose
 from geometry_msgs.msg import PoseStamped
 import math
 import message_filters
@@ -17,7 +17,7 @@ lidar_y_position = .1
 clearence = .2
 
 wall_width = 3
-
+goal_y_position = 5
 #Max radius of LIDAR scan
 R_value = (robot_width/2)/math.sin(math.radians(22.5))+lidar_y_position+clearence
 
@@ -25,56 +25,41 @@ R_value = (robot_width/2)/math.sin(math.radians(22.5))+lidar_y_position+clearenc
 def move_right(data, pose_data):
 	#Set the publisher and the initial state
 	pub = rospy.Publisher('twist_msg', Twist, queue_size = 10)
-	msg = Twist()
+	msg = Pose()
     	linear_x = 0
     	angular_z = 0
     	state_description = ''
 	
 	#Get Pose data
 	position_x = pose_data.pose.position.x
+	position_y = pose_data.pose.position.y
 	orientation_x = pose_data.pose.orientation.x
-	
-	#Orient robot 90deg (in development)
-	#while orientation_x < -math.pi/2:
-	#	angular_z = 0.3
-		
+
 	#Get LIDAR data for the left quadrant
 	a = data.ranges[147:233]
 	
 	#Set Left values
 	if min(a) <= R_value+clearence:
 		#If obstacle is still in robots' path
-		Left = 2
-	elif position_x <= -(wall_width/2)-clearence: 
-		#Needs proof of value
-		# lighthouse detects robot is too close to wall
 		Left = 1
 	else:
 		#Path clear
 		Left = 0
 
 	#Set twist messages according to Left values
-	if Left == 2:
+	if Left == 1:
 		state_description = 'Obstacle Detected_right'
-		linear_x = 0.6
-		angular_z = 0
-	elif Left == 1:
-		state_description = 'Too Close to Wall'
-		#Turn straight, then run "move_right"
-		#Needs proof of value
-		#while orientation_x < 0:
-		angular_z = -0.3
-		#Below is causing bug (probably because of orientation)
-		#move_left(data, pose_data)
+		post_position_x = (wall_width/2)-clearence
+		post_position_y = position_y
 	elif Left == 0:
 		state_description = 'Clear'
-		angular_z = -0.3
-		linear_x = 0
+		post_position_x = position_x
+		post_position_y = goal_y_position
 	
 	#Publish Twist_msg
 	rospy.loginfo(state_description)
-    	msg.linear.x = linear_x
-    	msg.angular.z = angular_z
+    	msg.position.x = post_position_x
+    	msg.position.y = post_position_y
     	pub.publish(msg)
 
 def move_left(data, pose_data):
