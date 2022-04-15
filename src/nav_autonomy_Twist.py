@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+#LAST THING TO DO!!!
+#Figure out how to orient robot 90 degrees
+
+
+
 #Import required packages
 import rospy 
 from sensor_msgs.msg import LaserScan
@@ -19,13 +24,15 @@ clearence = .2
 wall_width_right = 2
 wall_width_left = 2
 
+dist_to_mining_area = 
+
 #Max radius of LIDAR scan
 R_value = (robot_width/2)/math.sin(math.radians(22.5))+lidar_y_position+clearence
 
 #Now, we define the movement functions (eg. move_right, move_left, move_straight)
 def move_right(data, pose_data):
 	#Set the publisher and the initial state
-	pub = rospy.Publisher('twist_msg', Twist, queue_size = 10)
+	pub = rospy.Publisher('cmd_vel', Twist, queue_size = 10)
 	msg = Twist()
     	linear_x = 0
     	angular_z = 0
@@ -80,7 +87,7 @@ def move_right(data, pose_data):
     	pub.publish(msg)
 
 def move_left(data, pose_data):
-	pub = rospy.Publisher('twist_msg', Twist, queue_size = 10)
+	pub = rospy.Publisher('cmd_vel', Twist, queue_size = 10)
 	msg = Twist()
     	linear_x = 0
     	angular_z = 0
@@ -120,7 +127,7 @@ def move_left(data, pose_data):
     	pub.publish(msg)
 
 def move_straight():
-	pub = rospy.Publisher('twist_msg', Twist, queue_size = 10)
+	pub = rospy.Publisher('cmd_vel', Twist, queue_size = 10)
 	msg = Twist()
     	linear_x = 0.6
     	angular_z = 0
@@ -131,6 +138,7 @@ def move_straight():
     	pub.publish(msg)
 
 def callback(scan, pose_msg):
+	position_x = pose_data.pose.position.x
    	a = scan.ranges[48:95]
     	if min(a) <= R_value:
         	Left = 1
@@ -201,6 +209,7 @@ def callback(scan, pose_msg):
         elif Left == 1 and Front_left == 1 and Front_right == 1 and Right == 1:
         	state_description = 'case 16 - all_directions'
         	move_left(scan, pose_msg)
+	elif position_x 
         else:
         	state_description = 'unknown case'
 
