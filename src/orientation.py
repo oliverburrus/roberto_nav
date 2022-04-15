@@ -5,8 +5,12 @@ import rospy
 import math
 import tf
 from geometry_msgs import PoseStamped
+from sensor_msgs import Imu
 
-if __name__ == '__main__':
+
+        
+def callback(Imu_data):
+    if __name__ == '__main__':
     rospy.init_node('check_obstacle')
 
     listener = tf.TransformListener()
@@ -24,9 +28,14 @@ if __name__ == '__main__':
         y = trans[1]
         angular = math.atan2(trans[1], trans[0])
         pose = PoseStamped()
-        pose.position.x = x
-        pose.position.y = y
+        pose.position.x = x + #Imu_position_x
+        pose.position.y = y + #Imu_position_y
         pose.orientation.x = angular
         pose_msg.publish(pose)
 
         rate.sleep()
+
+
+
+sub = rospy.Subscriber('/imu', Imu, callback)
+rospy.spin()
