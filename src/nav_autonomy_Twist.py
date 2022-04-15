@@ -16,7 +16,8 @@ lidar_y_position = .1
 #How far you want your robot to stay away from obstacles in meters
 clearence = .2
 
-wall_width = 3
+wall_width_right = 2
+wall_width_left = 2
 
 #Max radius of LIDAR scan
 R_value = (robot_width/2)/math.sin(math.radians(22.5))+lidar_y_position+clearence
@@ -45,7 +46,7 @@ def move_right(data, pose_data):
 	if min(a) <= R_value+clearence:
 		#If obstacle is still in robots' path
 		Left = 2
-	elif position_x <= -(wall_width/2)-clearence: 
+	elif position_x <= -(wall_width_right/2)-clearence: 
 		#Needs proof of value
 		# lighthouse detects robot is too close to wall
 		Left = 1
@@ -93,7 +94,7 @@ def move_left(data, pose_data):
 	a = data.ranges[522:617]
 	if min(a) <= R_value+clearence:
 		Right = 2
-	elif position_x >= (wall_width/2)-clearence: 
+	elif position_x >= (wall_width_left/2)-clearence: 
 		# lighthouse detects robot is too close to wall
 		Right = 1
 	else:
