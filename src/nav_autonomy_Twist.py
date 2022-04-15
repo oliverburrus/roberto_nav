@@ -68,6 +68,7 @@ def move_right(data, pose_data):
 		#move_left(data, pose_data)
 	elif Left == 0:
 		state_description = 'Clear'
+		#while orientation_x < 0:
 		angular_z = -0.3
 		linear_x = 0
 	
@@ -109,6 +110,7 @@ def move_left(data, pose_data):
 		angular_z = 0.3
 		move_right(data, pose_data)
 	elif Right == 0:
+		#while orientation_x > 0:
 		state_description = 'Clear'
 		angular_z = 0.3
 	rospy.loginfo(state_description)
