@@ -7,7 +7,8 @@ import tf
 from geometry_msgs import PoseStamped
 from sensor_msgs import Imu
 
-
+#meters
+collection_bin_offset = 1
         
 def callback(Imu_data):
     if __name__ == '__main__':
@@ -29,8 +30,8 @@ def callback(Imu_data):
                 angular = math.atan2(trans[1], trans[0])
                 pose = PoseStamped()
                 pose.position.x = x + #Imu_position_x
-                pose.position.y = y + #Imu_position_y
-                pose.orientation.x = angular
+                pose.position.y = y - collection_bin_offset + #Imu_position_y
+                pose.orientation.x = angular + #Imu_rotation_from_y_axis
                 pose_msg.publish(pose)
 
                 rate.sleep()
