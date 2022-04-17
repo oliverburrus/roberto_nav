@@ -24,7 +24,7 @@ clearence = .2
 wall_width_right = 2
 wall_width_left = 2
 
-dist_to_mining_area = 
+dist_to_mining_area = 3.616
 
 #Max radius of LIDAR scan
 R_value = (robot_width/2)/math.sin(math.radians(22.5))+lidar_y_position+clearence
