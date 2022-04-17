@@ -9,6 +9,10 @@ from sensor_msgs import Imu
 
 #meters
 collection_bin_offset = 1
+
+initial_rotation = (math.pi/2)-(math.asin(0.46/pos)+#angle of depth cam to qr
+                                          
+
         
 def callback(Imu_data):
     if __name__ == '__main__':
@@ -27,6 +31,7 @@ def callback(Imu_data):
 
                 x = trans[0]
                 y = trans[1]
+                pos = math.sqrt(trans[0]**2+trans[1]**2)
                 angular = math.atan2(trans[1], trans[0])
                 pose = PoseStamped()
                 pose.position.x = x + #Imu_position_x
