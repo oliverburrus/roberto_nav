@@ -209,7 +209,8 @@ def callback(scan, pose_msg):
         elif Left == 1 and Front_left == 1 and Front_right == 1 and Right == 1:
         	state_description = 'case 16 - all_directions'
         	move_left(scan, pose_msg)
-	elif position_x 
+	elif position_x > dist_to_mining_area:
+		#stop script
         else:
         	state_description = 'unknown case'
 
