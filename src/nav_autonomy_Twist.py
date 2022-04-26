@@ -53,10 +53,10 @@ def move_right(data, pose_data):
 	if min(a) <= R_value+clearence:
 		#If obstacle is still in robots' path
 		Left = 2
-	elif position_x <= -(wall_width_right/2)-clearence: 
+	#elif position_x <= -(wall_width_right/2)-clearence: 
 		#Needs proof of value
 		# lighthouse detects robot is too close to wall
-		Left = 1
+	#	Left = 1
 	else:
 		#Path clear
 		Left = 0
@@ -101,9 +101,9 @@ def move_left(data, pose_data):
 	a = data.ranges[522:617]
 	if min(a) <= R_value+clearence:
 		Right = 2
-	elif position_x >= (wall_width_left/2)-clearence: 
+	#elif position_x >= (wall_width_left/2)-clearence: 
 		# lighthouse detects robot is too close to wall
-		Right = 1
+	#	Right = 1
 	else:
 		Right = 0
 
@@ -138,7 +138,7 @@ def move_straight():
     	pub.publish(msg)
 
 def callback(scan, pose_msg):
-	position_x = pose_data.pose.position.x
+	position_x = pose_msg.pose.position.x
    	a = scan.ranges[48:95]
     	if min(a) <= R_value:
         	Left = 1
@@ -209,16 +209,15 @@ def callback(scan, pose_msg):
         elif Left == 1 and Front_left == 1 and Front_right == 1 and Right == 1:
         	state_description = 'case 16 - all_directions'
         	move_left(scan, pose_msg)
-	elif position_x > dist_to_mining_area:
-		#stop script
         else:
         	state_description = 'unknown case'
+	rospy.loginfo(state_description)
 
 rospy.init_node('check_obstacle')
 
 
 laser_sub = message_filters.Subscriber('/scan', LaserScan)
-pose_sub = message_filters.Subscriber('/pose_msg', PoseStamped)
+pose_sub = message_filters.Subscriber('/pose_msg1', PoseStamped)
 
 ts = message_filters.ApproximateTimeSynchronizer([laser_sub, pose_sub], queue_size=10, slop = 1)
 ts.registerCallback(callback)
