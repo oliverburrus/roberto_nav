@@ -3,7 +3,7 @@
 #LAST THING TO DO!!!
 #Figure out how to orient robot 90 degrees
 
-
+import os
 
 #Import required packages
 import rospy 
@@ -13,6 +13,8 @@ from geometry_msgs.msg import PoseStamped
 import math
 import message_filters
 
+#sudo chmod 666 /dev/ttyUSB0
+os.system("sudo chmod 666 /dev/ttyUSB0")
 
 #The width of your robot in meters
 robot_width = .5
