@@ -12,37 +12,79 @@ collection_bin_offset = .31
 
 #initial_rotation = (math.pi/2)-(math.asin(0.46/pos)+#angle of depth cam to qr
                                           
+#if tf.object_18:         
+	if __name__ == '__main__':
+	    rospy.init_node('orientation')
 
-        
-if __name__ == '__main__':
-    rospy.init_node('orientation')
+	    listener = tf.TransformListener()
 
-    listener = tf.TransformListener()
+	    pose_msg = rospy.Publisher('pose_msg1', PoseStamped ,queue_size=5)
 
-    pose_msg = rospy.Publisher('pose_msg1', PoseStamped ,queue_size=5)
+	    rate = rospy.Rate(10.0)
+	    while not rospy.is_shutdown():
+		try:
+		    (trans,rot) = listener.lookupTransform('camera_depth_frame', '/object_18', rospy.Time(0))
+		except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+		    continue
 
-    rate = rospy.Rate(10.0)
-    while not rospy.is_shutdown():
-        try:
-            (trans,rot) = listener.lookupTransform('camera_depth_frame', '/object_18', rospy.Time(0))
-        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-            continue
+		x = trans[0]
+		y = trans[1]
+		z = trans[2]
+		pos = math.sqrt(trans[0]**2+trans[1]**2)
+		angular_z = math.atan2(trans[1], trans[0])
+		angular_y = math.atan2(trans[0], trans[2])
+		angular_x = math.atan2(trans[2], trans[1])
+		pose = PoseStamped()
+		pose.pose.position.x = x  #plus Imu_position_x
+		pose.pose.position.y = y - collection_bin_offset  #plus Imu_position_y
+		pose.pose.position.z = z
+		pose.pose.orientation.x = angular_z #plus Imu_rotation_from_y_axis
+		pose.pose.orientation.y = angular_x #plus Imu_rotation_from_y_axis
+		pose.pose.orientation.z = angular_y #plus Imu_rotation_from_y_axis
+		pose.header.stamp = rospy.Time.now()
+		pose_msg.publish(pose)
+		print(pos)
+		rate.sleep()
+#elif tf.object_19 exists:
+	if __name__ == '__main__':
+	    rospy.init_node('orientation')
 
-        x = trans[0]
-        y = trans[1]
-	z = trans[2]
-        pos = math.sqrt(trans[0]**2+trans[1]**2)
-        angular_z = math.atan2(trans[1], trans[0])
-        angular_y = math.atan2(trans[0], trans[2])
-        angular_x = math.atan2(trans[2], trans[1])
-        pose = PoseStamped()
-        pose.pose.position.x = x  #plus Imu_position_x
-        pose.pose.position.y = y - collection_bin_offset  #plus Imu_position_y
-	pose.pose.position.z = z
-        pose.pose.orientation.x = angular_z #plus Imu_rotation_from_y_axis
-        pose.pose.orientation.y = angular_x #plus Imu_rotation_from_y_axis
-        pose.pose.orientation.z = angular_y #plus Imu_rotation_from_y_axis
-	pose.header.stamp = rospy.Time.now()
-        pose_msg.publish(pose)
-	print(pos)
-        rate.sleep()
+	    listener = tf.TransformListener()
+
+	    pose_msg = rospy.Publisher('pose_msg1', PoseStamped ,queue_size=5)
+
+	    rate = rospy.Rate(10.0)
+	    while not rospy.is_shutdown():
+		try:
+		    (trans,rot) = listener.lookupTransform('camera_depth_frame', '/object_18', rospy.Time(0))
+		except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+		    continue
+
+		x = trans[0]
+		y = trans[1]
+		z = trans[2]
+		pos = math.sqrt(trans[0]**2+trans[1]**2)
+		angular_z = math.atan2(trans[1], trans[0])
+		angular_y = math.atan2(trans[0], trans[2])
+		angular_x = math.atan2(trans[2], trans[1])
+		pose = PoseStamped()
+		pose.pose.position.x = x  #plus Imu_position_x
+		pose.pose.position.y = y - collection_bin_offset  #plus Imu_position_y
+		pose.pose.position.z = z
+		pose.pose.orientation.x = angular_z #plus Imu_rotation_from_y_axis
+		pose.pose.orientation.y = angular_x #plus Imu_rotation_from_y_axis
+		pose.pose.orientation.z = angular_y #plus Imu_rotation_from_y_axis
+		pose.header.stamp = rospy.Time.now()
+		pose_msg.publish(pose)
+		print(pos)
+		rate.sleep()
+#elif neither tf.object_18 or tf.object_19 exist:
+	if __name__ == '__main__':
+	    	rospy.init_node('orientation')
+	    	vel = rospy.Publisher('cmd_vel', Twist ,queue_size=5)
+		rate = rospy.Rate(10.0)
+		Twist = Twist()
+		Twist.angular_z = 0.3
+		vel.publish(Twist)
+		rate.sleep()
+
