@@ -78,7 +78,7 @@ collection_bin_offset = .31
 		pose_msg.publish(pose)
 		print(pos)
 		rate.sleep()
-#elif neither tf.object_18 or tf.object_19 exist:
+#elif neither tf.object_18 or tf.object_19 or pose_msg1 exist:
 	if __name__ == '__main__':
 	    	rospy.init_node('orientation')
 	    	vel = rospy.Publisher('cmd_vel', Twist ,queue_size=5)
