@@ -138,6 +138,18 @@ def move_straight():
     	msg.linear.x = linear_x
     	msg.angular.z = angular_z
     	pub.publish(msg)
+	
+def nav_goal_1():
+	pub = rospy.Publisher('cmd_vel', Twist, queue_size = 10)
+	msg = Twist()
+	if round(pose_msg.pose.orientation.x
+    	linear_x = 0.6
+    	angular_z = 0
+    	state_description = 'Clear_straight'
+	rospy.loginfo(state_description)
+    	msg.linear.x = linear_x
+    	msg.angular.z = angular_z
+    	pub.publish(msg)
 
 def callback(scan, pose_msg):
 	position_x = pose_msg.pose.position.x
@@ -211,6 +223,8 @@ def callback(scan, pose_msg):
         elif Left == 1 and Front_left == 1 and Front_right == 1 and Right == 1:
         	state_description = 'case 16 - all_directions'
         	move_left(scan, pose_msg)
+	elif pose_msg1.pose.position.y > collection_zone:
+		nav_goal_1()
         else:
         	state_description = 'unknown case'
 	rospy.loginfo(state_description)
