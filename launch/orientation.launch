@@ -1,5 +1,9 @@
 <launch>
 	<node pkg="check_obstacle" type="orientation.py" name="check_obstacle" output="screen">
-
 	</node>
+	
+	<node pkg="robot_localization" type="ekf_localization_node" name="ekf_se" clear_params="true">
+    		<rosparam command="load" file="$(find mobile_robot_autonomous_navigation)/config/ekf.yaml" />
+    		<remap from={odom_topic} to="odom"/>
+  	</node>
 </launch>
