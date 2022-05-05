@@ -11,12 +11,6 @@ def talker():
 	rate = rospy.Rate(10)
 	while not rospy.is_shutdown():
 		msg = Odometry()
-		point_x = randint(1, 5)
-		point_y = randint(1, 5)
-		msg.pose.position.x = point_x
-		msg.pose.position.y = point_y
-		msg.pose.orientation.x = 0
-		msg.header.stamp = rospy.Time.now()
 		pub.publish(msg)
 
 if __name__ == '__main__':
