@@ -1,0 +1,4 @@
+<launch>
+	<node pkg="check_obstacle" type="dummy_pose.py" name="dummy_odom" output="screen">
+	</node>
+</launch>
