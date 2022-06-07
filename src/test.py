@@ -190,7 +190,7 @@ rospy.init_node('check_obstacle')
 
 
 laser_sub = message_filters.Subscriber('/scan', LaserScan)
-pose_sub = message_filters.Subscriber('/pose_msg1', PoseStamped)
+pose_sub = message_filters.Subscriber('/pose_msg', PoseStamped)
 
 ts = message_filters.ApproximateTimeSynchronizer([laser_sub, pose_sub], queue_size=10, slop = 1)
 ts.registerCallback(callback)
