@@ -1,9 +1,4 @@
 <launch>
-	<node pkg="check_obstacle" type="lidar_setup.sh" name="lidar_setup" output="screen">
-	</node>
-	
-	<include file="$(find rplidar_ros)/launch/rplidar.launch" />
-	
-	<node pkg="check_obstacle" type="nav_autonomy_Twist.py" name="check_obstacle" output="screen">
+	<node pkg="check_obstacle" type="test.py" name="check_obstacle" output="screen">
 	</node>
 </launch>
